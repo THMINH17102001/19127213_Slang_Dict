@@ -10,5 +10,5 @@ import java.util.Set;
 import java.util.TreeMap;
 
 public class SlangObject {
-
+    private TreeMap<String, List<String>> ma = new TreeMap<>();
 }
