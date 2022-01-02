@@ -24,7 +24,6 @@ public class Add extends JPanel {
 
         // Form
         JPanel form = new JPanel();
-
         JPanel slagPanel = new JPanel();
         form.setBackground(Color.CYAN);
         SpringLayout layout = new SpringLayout();
