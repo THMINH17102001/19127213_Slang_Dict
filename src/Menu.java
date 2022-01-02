@@ -80,6 +80,22 @@ public class Menu extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        if(e.getSource() == btn1){
 
+        }else if(e.getSource() == btn2){
+
+        }else if(e.getSource() == btn3){
+
+        }else if(e.getSource() == btn4){
+
+        }else if(e.getSource() == btn5){
+
+        }else if(e.getSource() == btn6){
+
+        }else if(e.getSource() == btn7){
+
+        }else if(e.getSource() == btn8){
+
+        }
     }
 }
