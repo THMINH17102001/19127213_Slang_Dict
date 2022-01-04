@@ -6,17 +6,12 @@ import java.io.*;
 import java.util.*;
 
 public class Add extends JPanel {
-    SlangObject slangWord;
+    SlangList slangList;
     JButton btnBack, btnAdd;
     JTextField textFieldMeaning, textFieldSlang;
+    JLabel titleLabel = new JLabel("Add Slang Words");
     public Add(){
-        slangWord = SlangObject.getInstance();
-        JLabel titleLabel = new JLabel();
-        titleLabel.setText("Add Slang Words");
-        titleLabel.setForeground(Color.green);
-        titleLabel.setAlignmentX(CENTER_ALIGNMENT);
-        titleLabel.setPreferredSize(new Dimension(300, 100));
-
+        slangList = slangList.getList();
         setLayoutManager();
         setLocationAndSize();
         addComponentsToContainer();
@@ -95,7 +90,9 @@ public class Add extends JPanel {
     }
 
     public void setLayoutManager(){
-
+        titleLabel.setForeground(Color.green);
+        titleLabel.setAlignmentX(CENTER_ALIGNMENT);
+        titleLabel.setPreferredSize(new Dimension(300, 100));
     }
     public void setLocationAndSize(){
 
