@@ -5,7 +5,7 @@ import java.util.*;
 import java.io.*;
 import javax.swing.event.*;
 
-public class Find extends JPanel implements ActionListener {
+public class Find extends JPanel {
     JLabel label1 = new JLabel("Input Slang word or Slang definition");
     JButton findBtn;
     JTextField findTextfield;
@@ -38,11 +38,11 @@ public class Find extends JPanel implements ActionListener {
         autoSuggestBox = new JComboBox();
         findTextfield.setLayout(new BorderLayout());
         findTextfield.add(autoSuggestBox, BorderLayout.SOUTH);
-        JComboBox cbInput = new JComboBox(model) {
+        /**JComboBox cbInput = new JComboBox(model) {
             public Dimension getPreferredSize() {
                 return new Dimension(super.getPreferredSize().width, 0);
             }
-        };
+        };*/
 
         findWordsPanel.add(findTextfield);
 
@@ -69,18 +69,18 @@ public class Find extends JPanel implements ActionListener {
 
         findTextfield.getDocument().addDocumentListener(new DocumentListener() {
             public void insertUpdate(DocumentEvent e) {
-                updateList();
+                //updateList();
             }
 
             public void removeUpdate(DocumentEvent e) {
-                updateList();
+                //updateList();
             }
 
             public void changedUpdate(DocumentEvent e) {
-                updateList();
+                //updateList();
             }
 
-            private void updateList() {
+            /**private void updateList() {
                 setAdjusting(autoSuggestBox, true);
                 model.removeAllElements();
                 String input = txtInput.getText();
@@ -93,7 +93,7 @@ public class Find extends JPanel implements ActionListener {
                 }
                 cbInput.setPopupVisible(model.getSize() > 0);
                 setAdjusting(cbInput, false);
-            }
+            }*/
         });
 
 
