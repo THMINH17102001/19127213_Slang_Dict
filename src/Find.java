@@ -9,10 +9,10 @@ import javax.swing.table.DefaultTableModel;
 
 public class Find extends JFrame implements ActionListener{
     Container container = getContentPane();
-    JButton findBtn;
+    JButton findBtn, addBtn, deleteBtn, editBtn, resetBtn, randomBtn, backBtn;
     JTextField findTextfield;
     JComboBox chooseBox;
-    JPanel panel1, findWordsPanel, panel2, panelRight, panelBottom;
+    JPanel panel1, findWordsPanel, panel2, rightPanel, bottomPanel;
     DefaultTableModel model;
     JTable resultTable;
     SlangList slangList;
@@ -83,7 +83,7 @@ public class Find extends JFrame implements ActionListener{
         panel2.setLayout(new GridLayout(1, 1));
         panel2.add(sp);
 
-        panelRight = new JPanel(new BorderLayout());
+        rightPanel = new JPanel(new BorderLayout());
         historyListModel = new DefaultListModel<>();
         try {
             historyArr = slangList.getHistory();
@@ -100,24 +100,57 @@ public class Find extends JFrame implements ActionListener{
         historyPane.setPreferredSize(new Dimension(200,50));
         historyLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         historyPane.add(historyLabel);
-        panelRight.add(historyPane, BorderLayout.PAGE_START);
-        panelRight.add(new JScrollPane(historyList));
+
+        rightPanel.add(historyPane, BorderLayout.PAGE_START);
+        rightPanel.add(new JScrollPane(historyList));
+
+
+        JPanel outsideBottomPanel = new JPanel();
+        outsideBottomPanel.setLayout(new FlowLayout());
+        bottomPanel = new JPanel();
+        bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
+        addBtn = new JButton("Add");
+        deleteBtn = new JButton("Delete");
+        editBtn = new JButton("Edit");
+        resetBtn = new JButton("Reset");
+        randomBtn = new JButton("Random");
+        backBtn = new JButton("Back"); backBtn.setBackground(Color.PINK);
+        bottomPanel.add(Box.createRigidArea(new Dimension(20,0)));
+        bottomPanel.add(addBtn);
+        bottomPanel.add(Box.createRigidArea(new Dimension(20,0)));
+        bottomPanel.add(deleteBtn);
+        bottomPanel.add(Box.createRigidArea(new Dimension(20,0)));
+        bottomPanel.add(editBtn);
+        bottomPanel.add(Box.createRigidArea(new Dimension(20,0)));
+        bottomPanel.add(resetBtn);
+        bottomPanel.add(Box.createRigidArea(new Dimension(20,0)));
+        bottomPanel.add(randomBtn);
+        bottomPanel.add(Box.createRigidArea(new Dimension(20,0)));
+        bottomPanel.add(backBtn);
+        outsideBottomPanel.add(bottomPanel);
+
 
         leftPanel = new JPanel();
         leftPanel.setLayout(new BorderLayout());
         leftPanel.add(panel1, BorderLayout.PAGE_START);
         leftPanel.add(panel2,BorderLayout.CENTER);
-
+        leftPanel.add(outsideBottomPanel, BorderLayout.PAGE_END);
     }
 
     public void addComponentsToContainer() {
         container.add(leftPanel, BorderLayout.CENTER);
-        container.add(panelRight, BorderLayout.EAST);
+        container.add(rightPanel, BorderLayout.EAST);
     }
 
 
     public void addActionEvent() {
         findBtn.addActionListener(this);
+        addBtn.addActionListener(this);
+        editBtn.addActionListener(this);
+        deleteBtn.addActionListener(this);
+        resetBtn.addActionListener(this);
+        randomBtn.addActionListener(this);
+        backBtn.addActionListener(this);
     }
 
     @Override
@@ -133,7 +166,30 @@ public class Find extends JFrame implements ActionListener{
                 ae.printStackTrace();
             }
         }
+        else if(e.getSource() == addBtn){
 
+        }
+        else if(e.getSource() == editBtn){
+
+        }
+        else if(e.getSource() == deleteBtn){
+
+        }
+        else if(e.getSource() == resetBtn){
+            slangList.reset();
+        }
+        else if(e.getSource() == randomBtn){
+
+        }
+        else if(e.getSource() == backBtn){
+            dispose();
+            Menu menu = new Menu();
+            menu.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            menu.setSize(1000,1000);
+            menu.setDefaultLookAndFeelDecorated(true);
+            menu.setTitle("Slang words");
+            menu.setVisible(true);
+        }
     }
 
 }

@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.*;
 
-public class SlangList {
+public class SlangList{
     private TreeMap<String, List<String>> tree = new TreeMap<>();
     private int treeSize;
     String orgFileName = "orgSlang.txt";
@@ -59,6 +59,22 @@ public class SlangList {
         br.close();
     }
 
+    public void writeFile(String file) throws IOException{
+        BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+        bw.write("Slag`Meaning");
+        for(Map.Entry<String, List<String>> entry: tree.entrySet())
+        {
+            bw.write(entry.getKey() +"`");
+        }
+        bw.close();
+    }
+    public void reset(){
+        try {
+            readFile(historyFileName);
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
 
     public ArrayList<String> getHistory() throws IOException{
         ArrayList<String> arr = new ArrayList<>();
