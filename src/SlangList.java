@@ -7,6 +7,7 @@ public class SlangList {
     String orgFileName = "orgSlang.txt";
     String editableFileName = "editableSlang.txt";
     String historyFileName = "historySlang.txt";
+    ArrayList<String> searchHistory;
     private SlangList() {
         try {
             String currentAddress = new java.io.File(".").getCanonicalPath();
@@ -15,6 +16,8 @@ public class SlangList {
             orgFileName = currentAddress + "\\" + orgFileName;
             historyFileName = currentAddress + "\\" + historyFileName;
             readFile(editableFileName);
+            searchHistory = getHistory();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -29,17 +32,14 @@ public class SlangList {
         tree.clear();
         BufferedReader br = new BufferedReader(new FileReader(file));
         String firstLine = br.readLine();
-        String line = null;
+        String line;
         treeSize = 0;
-        int i = 0;
         String tokens[];
         String key, definitionString;
         while ((line = br.readLine())!= null) {
             if(line.contains("`") == true) {
                 List<String> definitionList = new ArrayList<String>();
                 tokens = line.split("`");
-                System.out.println("Line " + i + ": " + line);
-                i++;
                 key = tokens[0];
                 definitionString = tokens[1];
                 if (tree.containsKey(key)) {
@@ -59,10 +59,32 @@ public class SlangList {
         br.close();
     }
 
+
+    public ArrayList<String> getHistory() throws IOException{
+        ArrayList<String> arr = new ArrayList<>();
+        BufferedReader br = new BufferedReader(new FileReader(historyFileName));
+        String line;
+        while((line = br.readLine()) != null){
+            arr.add(line);
+        }
+        br.close();
+        return arr;
+    }
+    public void saveHistory(ArrayList<String> arr) throws IOException{
+        if(arr == null)
+            return;
+        BufferedWriter bw = new BufferedWriter(new FileWriter(historyFileName));
+        for(String str : arr){
+            String x = str + "\n";
+            bw.write(x);
+        }
+        bw.close();
+    }
+
     public ArrayList<String> getSlangKeyList(){
         ArrayList<String> arr = new ArrayList<>();
         Set<Map.Entry<String, List<String>> > entrySet = tree.entrySet();
-        // Convert entrySet to Array using toArray method
+
         Map.Entry<String, List<String>>[] entryArray = entrySet.toArray(new Map.Entry[entrySet.size()]);
         for(int i = 0; i < tree.size(); i++){
             arr.add(entryArray[i].getKey());
@@ -72,17 +94,10 @@ public class SlangList {
     }
 
     public ArrayList<String> getSlangDefinition(String key){
-        List<String> listMeaning = map.get(key);
-        if (listMeaning == null)
+        List<String> defList = tree.get(key);
+        if (defList == null)
             return null;
-        int size = listMeaning.size();
-        String s[][] = new String[size][3];
-        for (int i = 0; i < size; i++) {
-            s[i][0] = String.valueOf(i);
-            s[i][1] = key;
-            s[i][2] = listMeaning.get(i);
-        }
-        return s;
-
+        ArrayList<String> arr = new ArrayList<>(defList);
+        return arr;
     }
 }
