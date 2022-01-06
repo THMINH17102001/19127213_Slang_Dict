@@ -5,15 +5,16 @@ import java.util.*;
 import java.io.*;
 import javax.swing.event.*;
 
-public class Find extends JPanel {
+public class Find extends JFrame {
+    Container container = getContentPane();
     JLabel label1 = new JLabel("Input Slang word or Slang definition");
     JButton findBtn;
     JTextField findTextfield;
-    JComboBox autoSuggestBox;
     JComboBox chooseBox;
     JPanel panel1, findWordsPanel;
     SlangList slangList;
     public Find(){
+        slangList = SlangList.getList();
         setLayoutManager();
         setLocationAndSize();
         addComponentsToContainer();
@@ -35,15 +36,14 @@ public class Find extends JPanel {
 
         findWordsPanel.add(Box.createRigidArea(new Dimension(20,20)));
         findTextfield = new JTextField();
-        autoSuggestBox = new JComboBox();
-        findTextfield.setLayout(new BorderLayout());
-        findTextfield.add(autoSuggestBox, BorderLayout.SOUTH);
-        /**JComboBox cbInput = new JComboBox(model) {
-            public Dimension getPreferredSize() {
-                return new Dimension(super.getPreferredSize().width, 0);
+        AutoSuggestor autoSuggestor = new AutoSuggestor(findTextfield,this,null, Color.WHITE.brighter(), Color.BLACK, Color.RED, 0.75f) {
+            @Override
+            boolean wordTyped(String typedWord) {
+                ArrayList<String> words = slangList.getSlangKeyList();
+                setDictionary(words);
+                return super.wordTyped(typedWord);//now call super to check for any matches against newest dictionary
             }
-        };*/
-
+        };
         findWordsPanel.add(findTextfield);
 
         findWordsPanel.add(Box.createRigidArea(new Dimension(20,20)));
@@ -60,42 +60,11 @@ public class Find extends JPanel {
     }
 
     public void addComponentsToContainer() {
-        add(panel1, BorderLayout.PAGE_START);
+        container.add(panel1, BorderLayout.PAGE_START);
     }
 
 
     public void addActionEvent() {
-        slangList = SlangList.getList();
-
-        findTextfield.getDocument().addDocumentListener(new DocumentListener() {
-            public void insertUpdate(DocumentEvent e) {
-                //updateList();
-            }
-
-            public void removeUpdate(DocumentEvent e) {
-                //updateList();
-            }
-
-            public void changedUpdate(DocumentEvent e) {
-                //updateList();
-            }
-
-            /**private void updateList() {
-                setAdjusting(autoSuggestBox, true);
-                model.removeAllElements();
-                String input = txtInput.getText();
-                if (!input.isEmpty()) {
-                    for (String item : items) {
-                        if (item.toLowerCase().startsWith(input.toLowerCase())) {
-                            model.addElement(item);
-                        }
-                    }
-                }
-                cbInput.setPopupVisible(model.getSize() > 0);
-                setAdjusting(cbInput, false);
-            }*/
-        });
-
 
     }
 

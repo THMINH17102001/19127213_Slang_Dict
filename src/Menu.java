@@ -83,13 +83,11 @@ public class Menu extends JFrame implements ActionListener {
         if(e.getSource() == btn1){
             getContentPane().removeAll();
             Find find = new Find();
-            JFrame fr = new JFrame("Find Slang words");
-            fr.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            fr.setDefaultLookAndFeelDecorated(true);
-            fr.setSize(800,800);
-            fr.add(find);
+            find.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            find.setDefaultLookAndFeelDecorated(true);
+            find.setSize(800,800);
             setVisible(false);
-            fr.setVisible(true);
+            find.setVisible(true);
 
 
         }else if(e.getSource() == btn2){
