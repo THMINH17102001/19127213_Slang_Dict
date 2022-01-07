@@ -139,7 +139,7 @@ public class SlangList{
     public void edit(String key, String oldVal, String newVal){
         List<String> defList = tree.get(key);
         int index = defList.indexOf(oldVal);
-        if(oldVal != newVal)
+        if(oldVal.equals(newVal) == false)
             defList.set(index, newVal);
         try {
             this.writeFile(editableFileName);

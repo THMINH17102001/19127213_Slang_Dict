@@ -11,7 +11,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
-public class Find extends JFrame implements ActionListener, TableModelListener{
+public class Find extends JFrame implements ActionListener{
     Container container = getContentPane();
     JButton findBtn, addBtn, deleteBtn, editBtn, resetBtn, randomBtn, quizzBtn;
     JTextField findTextfield;
@@ -86,7 +86,7 @@ public class Find extends JFrame implements ActionListener, TableModelListener{
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         resultTable.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
         resultTable.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
-        resultTable.getModel().addTableModelListener(this);
+        //resultTable.getModel().addTableModelListener(this);
         JScrollPane sp = new JScrollPane(resultTable);
 
         panel2.setLayout(new GridLayout(1, 1));
@@ -284,6 +284,33 @@ public class Find extends JFrame implements ActionListener, TableModelListener{
             qType.setSize(800,800);
             qType.setVisible(true);
         }
+        else if(e.getSource() == editBtn){
+            int row = resultTable.getSelectedRow();
+            int col = resultTable.getSelectedColumn();
+            String key, oldVal, newVal;
+            if (row == col && row == -1)
+                return;
+            else {
+                if (col == 1 && row >= 0) {
+                    System.out.println("row: " + row +"col: " +col );
+                    key = (String) resultTable.getValueAt(row, 0);
+                    oldVal = editTable[row][1];
+                    newVal = (String) resultTable.getValueAt(row, 1);
+                    System.out.print(key + "/" + oldVal + "/" + newVal);
+                    if(oldVal.equals(newVal) == false) {
+                        slangList.edit(key, oldVal, newVal);
+                        editTable[row][1] = newVal;
+                        resultTable.setValueAt(key, row,0);
+                        resultTable.setValueAt(newVal,row,1);
+                        model.setValueAt(key, row,0);
+                        model.setValueAt(newVal,row,1);
+                        JOptionPane.showMessageDialog(this, "Updating slang word successfully");
+                    }
+                }
+                resultTable.setFocusable(false);
+            }
+
+        }
     }
     void clearTable() {
         int rowCount = model.getRowCount();
@@ -294,27 +321,6 @@ public class Find extends JFrame implements ActionListener, TableModelListener{
         }
     }
 
-    @Override
-    public void tableChanged(TableModelEvent e){
-        int row = resultTable.getSelectedRow();
-        int col = resultTable.getSelectedColumn();
-        String key, oldVal, newVal;
-        if (row == col && row == -1)
-            return;
-        else {
-            if (col == 1 && row >= 0) {
-                key = (String) resultTable.getValueAt(row, 0);
-                oldVal = editTable[row][1];
-                newVal = (String) resultTable.getValueAt(row, 1);
-                if(resultTable == null)
-                    return;
-                slangList.edit(key , oldVal, newVal);
-                JOptionPane.showMessageDialog(this, "Updated a row.");
-            }
-            resultTable.setFocusable(false);
-        }
-
-    }
 
 
 }
