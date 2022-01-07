@@ -79,6 +79,38 @@ public class SlangList{
         bw.close();
     }
 
+    public ArrayList<String> find(String key){
+        List<String> defList = tree.get(key);
+        if (defList == null)
+            return null;
+        ArrayList<String> arr = new ArrayList<>(defList);
+        return arr;
+    }
+
+    public void add(int type, String slang, String definition) {
+        List<String> defList = new ArrayList<>();
+        if(type == 1) {//add new
+            defList.add(definition);
+        }
+        else if(type == 2) {//duplicate
+            List<String> meaningList = tree.get(slang);
+            meaningList.add(definition);
+        }
+        else{//overwrite
+            List<String> meaningList = tree.get(slang);
+            meaningList.set(0, definition);
+        }
+        tree.put(slang, defList);
+        try {
+            this.writeFile(editableFileName);
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void addOverwrite(String slag, String meaning) {
+    }
+
     public void edit(String key, String oldVal, String newVal){
         List<String> defList = tree.get(key);
         int index = defList.indexOf(oldVal);
@@ -120,22 +152,23 @@ public class SlangList{
     public int getRandomNumber(int min, int max) {
         return (int) ((Math.random() * (max - min)) + min);
     }
-    public String[] random(){
+    public ArrayList<String> random(){
         int min = 0;
         int max = tree.size() - 1;
+        ArrayList<String> arr = new ArrayList<>();
         int rand = getRandomNumber(min, max);
-        String s[] = new String[2];
         int index = 0;
+        String slang = null;
         for (String key : tree.keySet()) {
             if (index == rand) {
-                s[0] = key;
-                s[1] = tree.get(key).get(0);
+                arr = find(key);
+                slang = key;
                 break;
             }
             index++;
         }
-        return s;
-
+        arr.add(0, slang);
+        return arr;
     }
     public ArrayList<String> getHistory() throws IOException{
         ArrayList<String> arr = new ArrayList<>();
@@ -170,11 +203,4 @@ public class SlangList{
         return arr;
     }
 
-    public ArrayList<String> getSlangDefinition(String key){
-        List<String> defList = tree.get(key);
-        if (defList == null)
-            return null;
-        ArrayList<String> arr = new ArrayList<>(defList);
-        return arr;
-    }
 }

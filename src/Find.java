@@ -16,6 +16,7 @@ public class Find extends JFrame implements ActionListener, TableModelListener{
     JButton findBtn, addBtn, deleteBtn, editBtn, resetBtn, randomBtn, quizzBtn;
     JTextField findTextfield;
     JComboBox chooseBox;
+    Random r;
     JPanel panel1, findWordsPanel, panel2, rightPanel, bottomPanel;
     DefaultTableModel model;
     JTable resultTable;
@@ -184,7 +185,7 @@ public class Find extends JFrame implements ActionListener, TableModelListener{
                 historyArr.add(0, history);
                 Integer findChoice = chooseBox.getSelectedIndex();
                 if(findChoice == 0){
-                    ArrayList<String> temp = slangList.getSlangDefinition(find);
+                    ArrayList<String> temp = slangList.find(find);
                     if(temp == null){
                         JOptionPane.showMessageDialog(this, "Cannot find Slang Word");
                     }
@@ -248,7 +249,14 @@ public class Find extends JFrame implements ActionListener, TableModelListener{
                 autoSuggestor = null;
         }
         else if(e.getSource() == randomBtn){
-
+            if(r != null)
+                r.dispose();
+            r = new Random(slangList);
+            r.setTitle("Random Slang word");
+            r.setResizable(false);
+            r.setDefaultLookAndFeelDecorated(true);
+            r.setSize(500,600);
+            r.setVisible(true);
         }
     }
     void clearTable() {
