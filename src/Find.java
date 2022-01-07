@@ -159,6 +159,7 @@ public class Find extends JFrame implements ActionListener, TableModelListener{
         deleteBtn.addActionListener(this);
         resetBtn.addActionListener(this);
         randomBtn.addActionListener(this);
+        quizzBtn.addActionListener(this);
     }
 
     @Override
@@ -209,7 +210,6 @@ public class Find extends JFrame implements ActionListener, TableModelListener{
                     if(s == null){
                         JOptionPane.showMessageDialog(this, "Cannot find Slang contains this definition");
                     }
-
                 }
                 if(s == null)
                     return;
@@ -275,6 +275,14 @@ public class Find extends JFrame implements ActionListener, TableModelListener{
             r.setDefaultLookAndFeelDecorated(true);
             r.setSize(500,600);
             r.setVisible(true);
+        }
+        else if(e.getSource() == quizzBtn){
+            this.dispose();
+            QuizzType qType = new QuizzType(slangList);
+            qType.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            qType.setDefaultLookAndFeelDecorated(true);
+            qType.setSize(800,800);
+            qType.setVisible(true);
         }
     }
     void clearTable() {

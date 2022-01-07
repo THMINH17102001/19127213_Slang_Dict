@@ -1,3 +1,5 @@
+import com.sun.jdi.ArrayReference;
+
 import java.io.*;
 import java.util.*;
 public class SlangList{
@@ -222,6 +224,43 @@ public class SlangList{
             arr.add(entryArray[i].getKey());
         }
         return arr;
+    }
+
+    public String[] quiz(int type) {
+        String[] s = new String[6];
+        if (type == 1) {//slangWord --> definition;
+            ArrayList<String> correctAnswerRandom = random();
+            s[0] = correctAnswerRandom.get(0);
+            s[1] = correctAnswerRandom.get(1);
+            int i = 2;
+            int correctAnswerPlace = getRandomNumber(2,5);
+            s[correctAnswerPlace] = correctAnswerRandom.get(1);
+            while(i <= 5){
+                ArrayList<String> answersRandom = random();
+                if(answersRandom.get(0) != correctAnswerRandom.get(0)){
+                    if(i != correctAnswerPlace)
+                        s[i] = answersRandom.get(1);
+                    i++;
+                }
+            }
+        }
+        else {//definition --> slang
+            ArrayList<String> correctAnswerRandom = random();
+            s[0] = correctAnswerRandom.get(0);
+            s[1] = correctAnswerRandom.get(1);
+            int i = 2;
+            int correctAnswerPlace = getRandomNumber(2,5);
+            s[correctAnswerPlace] = correctAnswerRandom.get(0);
+            while(i <= 5){
+                ArrayList<String> answersRandom = random();
+                if(answersRandom.get(0) != correctAnswerRandom.get(0)){
+                    if(i != correctAnswerPlace)
+                        s[i] = answersRandom.get(0);
+                    i++;
+                }
+            }
+        }
+        return s;
     }
 
 }
