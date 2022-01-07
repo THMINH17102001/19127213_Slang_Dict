@@ -59,8 +59,6 @@ public class Menu extends JFrame implements ActionListener {
             find.setSize(800,800);
             setVisible(false);
             find.setVisible(true);
-
-
         }else if(e.getSource() == btn2){
 
         }

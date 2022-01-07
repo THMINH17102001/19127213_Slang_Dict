@@ -46,7 +46,7 @@ public class SlangList{
                     definitionList = tree.get(key);
                 }
                 if (definitionString.contains("|")) {
-                    String[] d = definitionString.split("|");
+                    String[] d = definitionString.split("\\|");
                     Collections.addAll(definitionList, d);
                     treeSize += d.length - 1;
                 } else {
@@ -61,16 +61,33 @@ public class SlangList{
 
     public void writeFile(String file) throws IOException{
         BufferedWriter bw = new BufferedWriter(new FileWriter(file));
-        bw.write("Slag`Meaning");
-        for(Map.Entry<String, List<String>> entry: tree.entrySet())
+        bw.write("Slag`Meaning \n");
+        Set<String> treeSet = tree.keySet();
+        Object[] treeArray = treeSet.toArray();
+        List<String> s;
+        StringBuilder line = new StringBuilder();
+        for(int i = 0; i < tree.size(); i++)
         {
-            bw.write(entry.getKey() +"`");
+            line.append(treeArray[i] + "`");
+            List<String> temp = tree.get(treeArray[i]);
+            for(int j = 0; j < temp.size(); j++){
+                line.append(temp.get(j));
+                if(j != temp.size() - 1)
+                {
+                    line.append("| ");
+                }
+            }
+            line.append("\n");
+            bw.write(line.toString());
         }
         bw.close();
     }
+
     public void reset(){
+        System.out.println("Function reset");
         try {
-            readFile(historyFileName);
+            readFile(orgFileName);
+            writeFile(editableFileName);
         }catch(IOException e){
             e.printStackTrace();
         }
