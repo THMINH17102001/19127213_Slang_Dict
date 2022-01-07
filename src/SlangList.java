@@ -87,18 +87,45 @@ public class SlangList{
         return arr;
     }
 
+    public String[][] findByDefinition(String word) {
+        ArrayList<String> keyList = getSlangKeyList();
+        ArrayList<String> wordContainList = new ArrayList<>();
+        ArrayList<String> wordContainDefList = new ArrayList<>();
+
+        for (String key: keyList) {
+            List<String> defList = tree.get(key);
+            for (String x : defList) {
+                if (x.toLowerCase().contains(word.toLowerCase())) {
+                    wordContainList.add(key);
+                    wordContainDefList.add(x);
+                }
+            }
+        }
+        int size = wordContainList.size();
+        if(size <= 0)
+            return null;
+        String s[][] = new String[size][2];
+        for (int i = 0; i < size; i++) {
+            s[i][0] = wordContainList.get(i);
+            s[i][1] = wordContainDefList.get(i);
+        }
+        return s;
+    }
+
+
+    public boolean contains(String key){
+        if(tree.containsKey(key))
+            return true;
+        return false;
+    }
     public void add(int type, String slang, String definition) {
         List<String> defList = new ArrayList<>();
-        if(type == 1) {//add new
+        if(type == 1 || type == 3) {//add new or overwrite
             defList.add(definition);
         }
         else if(type == 2) {//duplicate
-            List<String> meaningList = tree.get(slang);
-            meaningList.add(definition);
-        }
-        else{//overwrite
-            List<String> meaningList = tree.get(slang);
-            meaningList.set(0, definition);
+            defList = tree.get(slang);
+            defList.add(definition);
         }
         tree.put(slang, defList);
         try {
@@ -107,10 +134,6 @@ public class SlangList{
             e.printStackTrace();
         }
     }
-
-    public void addOverwrite(String slag, String meaning) {
-    }
-
     public void edit(String key, String oldVal, String newVal){
         List<String> defList = tree.get(key);
         int index = defList.indexOf(oldVal);
@@ -140,7 +163,6 @@ public class SlangList{
     }
 
     public void reset(){
-        System.out.println("Function reset");
         try {
             readFile(orgFileName);
             this.writeFile(editableFileName);
@@ -199,7 +221,6 @@ public class SlangList{
         for(int i = 0; i < tree.size(); i++){
             arr.add(entryArray[i].getKey());
         }
-
         return arr;
     }
 

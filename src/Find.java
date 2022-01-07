@@ -184,13 +184,16 @@ public class Find extends JFrame implements ActionListener, TableModelListener{
                 historyListModel.insertElementAt(history, 0);
                 historyArr.add(0, history);
                 Integer findChoice = chooseBox.getSelectedIndex();
+                ArrayList<String> temp = new ArrayList<>();
+                String[][] s = null;
                 if(findChoice == 0){
-                    ArrayList<String> temp = slangList.find(find);
+                    temp = slangList.find(find);
                     if(temp == null){
                         JOptionPane.showMessageDialog(this, "Cannot find Slang Word");
                     }
-                    else {
-                        String[][] s = new String[temp.size()][2];
+                    else
+                    {
+                        s = new String[temp.size()][2];
                         editTable = s;
                         int i = 0;
                         for (String x : temp) {
@@ -198,14 +201,22 @@ public class Find extends JFrame implements ActionListener, TableModelListener{
                             s[i][1] = x;
                             i++;
                         }
-                        for (String[] x : s) {
-                            model.addRow(x);
-                        }
+
                     }
                 }
                 else{
+                    s = slangList.findByDefinition(find);
+                    if(s == null){
+                        JOptionPane.showMessageDialog(this, "Cannot find Slang contains this definition");
+                    }
 
                 }
+                if(s == null)
+                    return;
+                for (String[] x : s) {
+                    model.addRow(x);
+                }
+
                 try {
                     slangList.saveHistory(historyArr);
                 } catch (IOException ae) {
@@ -214,6 +225,13 @@ public class Find extends JFrame implements ActionListener, TableModelListener{
             }
         }
         else if(e.getSource() == addBtn){
+            this.dispose();
+            Add add = new Add(slangList);
+            add.setTitle("Add Slang word");
+            add.setResizable(false);
+            add.setDefaultLookAndFeelDecorated(true);
+            add.setSize(400,400);
+            add.setVisible(true);
 
         }
         else if(e.getSource() == deleteBtn){
