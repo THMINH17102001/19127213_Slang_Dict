@@ -2,18 +2,18 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 
 import java.util.*;
 import java.io.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
-public class Find extends JFrame implements ActionListener, TableModelListener {
+public class Find extends JFrame implements ActionListener, TableModelListener{
     Container container = getContentPane();
-    JButton findBtn, addBtn, deleteBtn, editBtn, resetBtn, randomBtn, backBtn;
+    JButton findBtn, addBtn, deleteBtn, editBtn, resetBtn, randomBtn, quizzBtn;
     JTextField findTextfield;
     JComboBox chooseBox;
     JPanel panel1, findWordsPanel, panel2, rightPanel, bottomPanel;
@@ -21,7 +21,7 @@ public class Find extends JFrame implements ActionListener, TableModelListener {
     JTable resultTable;
     SlangList slangList;
     JPanel leftPanel;
-
+    String[][] editTable;
     AutoSuggestor autoSuggestor;
     private ArrayList<String> historyArr;
     private DefaultListModel<String> historyListModel;
@@ -49,14 +49,16 @@ public class Find extends JFrame implements ActionListener, TableModelListener {
 
         findWordsPanel.add(Box.createRigidArea(new Dimension(20,20)));
         findTextfield = new JTextField();
-        autoSuggestor = new AutoSuggestor(findTextfield,this,null, Color.WHITE.brighter(), Color.BLACK, Color.RED, 0.75f) {
-            @Override
-            boolean wordTyped(String typedWord) {
-                ArrayList<String> words = slangList.getSlangKeyList();
-                setDictionary(words);
-                return super.wordTyped(typedWord);//now call super to check for any matches against newest dictionary
-            }
-        };
+        if(chooseBox.getSelectedIndex() == 0) {
+            autoSuggestor = new AutoSuggestor(findTextfield, this, null, Color.WHITE.brighter(), Color.BLACK, Color.RED, 0.75f) {
+                @Override
+                boolean wordTyped(String typedWord) {
+                    ArrayList<String> words = slangList.getSlangKeyList();
+                    setDictionary(words);
+                    return super.wordTyped(typedWord);//now call super to check for any matches against newest dictionary
+                }
+            };
+        }
         findWordsPanel.add(findTextfield);
 
         findWordsPanel.add(Box.createRigidArea(new Dimension(20,20)));
@@ -120,7 +122,7 @@ public class Find extends JFrame implements ActionListener, TableModelListener {
         editBtn = new JButton("Edit");
         resetBtn = new JButton("Reset");
         randomBtn = new JButton("Random");
-        backBtn = new JButton("Back"); backBtn.setBackground(Color.PINK);
+        quizzBtn = new JButton("Quizz"); quizzBtn.setBackground(Color.CYAN);
         bottomPanel.add(Box.createRigidArea(new Dimension(20,0)));
         bottomPanel.add(addBtn);
         bottomPanel.add(Box.createRigidArea(new Dimension(20,0)));
@@ -132,7 +134,7 @@ public class Find extends JFrame implements ActionListener, TableModelListener {
         bottomPanel.add(Box.createRigidArea(new Dimension(20,0)));
         bottomPanel.add(randomBtn);
         bottomPanel.add(Box.createRigidArea(new Dimension(20,0)));
-        bottomPanel.add(backBtn);
+        bottomPanel.add(quizzBtn);
         outsideBottomPanel.add(bottomPanel);
 
 
@@ -156,12 +158,20 @@ public class Find extends JFrame implements ActionListener, TableModelListener {
         deleteBtn.addActionListener(this);
         resetBtn.addActionListener(this);
         randomBtn.addActionListener(this);
-        backBtn.addActionListener(this);
     }
 
     @Override
     public void actionPerformed(ActionEvent e){
+        if(chooseBox.getSelectedIndex() == 1)
+        {
+            autoSuggestor = null;
+        }
+
         if(e.getSource() == findBtn){
+            if(resultTable.isEditing()) {
+                JOptionPane.showMessageDialog(this, "Finish editing first");
+                return;
+            }
             String history = findTextfield.getText();
             String find = findTextfield.getText();
             if (find.isEmpty()) {
@@ -173,18 +183,23 @@ public class Find extends JFrame implements ActionListener, TableModelListener {
                 historyListModel.insertElementAt(history, 0);
                 historyArr.add(0, history);
                 Integer findChoice = chooseBox.getSelectedIndex();
-                System.out.println("findChoice: " + findChoice);
                 if(findChoice == 0){
                     ArrayList<String> temp = slangList.getSlangDefinition(find);
-                    String[][] s = new String[temp.size()][2];
-                    int i = 0;
-                    for(String x : temp){
-                        s[i][0] = find;
-                        s[i][1] = x;
-                        i++;
+                    if(temp == null){
+                        JOptionPane.showMessageDialog(this, "Cannot find Slang Word");
                     }
-                    for (String[]x : s) {
-                        model.addRow(x);
+                    else {
+                        String[][] s = new String[temp.size()][2];
+                        editTable = s;
+                        int i = 0;
+                        for (String x : temp) {
+                            s[i][0] = find;
+                            s[i][1] = x;
+                            i++;
+                        }
+                        for (String[] x : s) {
+                            model.addRow(x);
+                        }
                     }
                 }
                 else{
@@ -200,60 +215,72 @@ public class Find extends JFrame implements ActionListener, TableModelListener {
         else if(e.getSource() == addBtn){
 
         }
-        else if(e.getSource() == editBtn){
-
-        }
         else if(e.getSource() == deleteBtn){
+            int row = resultTable.getSelectedRow();
+            int col = resultTable.getSelectedColumn();
+            if (row == -1 || col == -1)
+                return;
+            String key = (String) resultTable.getValueAt(row, 0);
+            int n = JOptionPane.showConfirmDialog(this, "Would you like to delete this slang word?", "Delete confirmation",
+                    JOptionPane.YES_NO_OPTION);
+            if (n == 0) {
+                slangList.delete(key, (String) resultTable.getValueAt(row, 1));
+                // default title and icon
+                model.removeRow(row);
+                JOptionPane.showMessageDialog(this, "Deleted success");
+            }
 
         }
         else if(e.getSource() == resetBtn){
             slangList.reset();
             autoSuggestor = null;
-            autoSuggestor = new AutoSuggestor(findTextfield,this,null, Color.WHITE.brighter(), Color.BLACK, Color.RED, 0.75f) {
-                @Override
-                boolean wordTyped(String typedWord) {
-                    ArrayList<String> words = slangList.getSlangKeyList();
-                    setDictionary(words);
-                    return super.wordTyped(typedWord);//now call super to check for any matches against newest dictionary
-                }
-            };
-
+            if(chooseBox.getSelectedIndex() == 0) {
+                autoSuggestor = new AutoSuggestor(findTextfield, this, null, Color.WHITE.brighter(), Color.BLACK, Color.RED, 0.75f) {
+                    @Override
+                    boolean wordTyped(String typedWord) {
+                        ArrayList<String> words = slangList.getSlangKeyList();
+                        setDictionary(words);
+                        return super.wordTyped(typedWord);//now call super to check for any matches against newest dictionary
+                    }
+                };
+            }
+            else
+                autoSuggestor = null;
         }
         else if(e.getSource() == randomBtn){
 
         }
-        else if(e.getSource() == backBtn){
-            dispose();
-            Menu menu = new Menu();
-            menu.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            menu.setSize(1000,1000);
-            menu.setDefaultLookAndFeelDecorated(true);
-            menu.setTitle("Slang words");
-            menu.setVisible(true);
-        }
     }
-
-    @Override
-    public void tableChanged(TableModelEvent e) {
-        /**int row = jt.getSelectedRow();
-        int col = jt.getSelectedColumn();
-        if (row == col && row == -1)
-            return;
-        String Data = (String) jt.getValueAt(row, col);
-        System.out.println("Table element selected is: " + row + col + " : " + Data);
-        if (col == 2) {
-            // edit meaning
-            slangList.set((String) jt.getValueAt(row, 1), result[row][2], (String) jt.getValueAt(row, 2));
-            JOptionPane.showMessageDialog(this, "Updated a row.");
-        }
-        jt.setFocusable(false);*/
-    }
-
     void clearTable() {
         int rowCount = model.getRowCount();
+        if(rowCount <= 0)
+            return;
         for (int i = rowCount - 1; i >= 0; i--) {
             model.removeRow(i);
         }
     }
+
+    @Override
+    public void tableChanged(TableModelEvent e){
+        int row = resultTable.getSelectedRow();
+        int col = resultTable.getSelectedColumn();
+        String key, oldVal, newVal;
+        if (row == col && row == -1)
+            return;
+        else {
+            if (col == 1 && row >= 0) {
+                key = (String) resultTable.getValueAt(row, 0);
+                oldVal = editTable[row][1];
+                newVal = (String) resultTable.getValueAt(row, 1);
+                if(resultTable == null)
+                    return;
+                slangList.edit(key , oldVal, newVal);
+                JOptionPane.showMessageDialog(this, "Updated a row.");
+            }
+            resultTable.setFocusable(false);
+        }
+
+    }
+
 
 }

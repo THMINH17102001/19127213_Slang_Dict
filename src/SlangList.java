@@ -1,9 +1,7 @@
 import java.io.*;
 import java.util.*;
-
 public class SlangList{
     private TreeMap<String, List<String>> tree = new TreeMap<>();
-    private int treeSize;
     String orgFileName = "orgSlang.txt";
     String editableFileName = "editableSlang.txt";
     String historyFileName = "historySlang.txt";
@@ -33,7 +31,6 @@ public class SlangList{
         BufferedReader br = new BufferedReader(new FileReader(file));
         String firstLine = br.readLine();
         String line;
-        treeSize = 0;
         String tokens[];
         String key, definitionString;
         while ((line = br.readLine())!= null) {
@@ -48,12 +45,10 @@ public class SlangList{
                 if (definitionString.contains("|")) {
                     String[] d = definitionString.split("\\|");
                     Collections.addAll(definitionList, d);
-                    treeSize += d.length - 1;
                 } else {
                     definitionList.add(definitionString);
                 }
                 tree.put(key, definitionList);
-                treeSize++;
             }
         }
         br.close();
@@ -65,9 +60,10 @@ public class SlangList{
         Set<String> treeSet = tree.keySet();
         Object[] treeArray = treeSet.toArray();
         List<String> s;
-        StringBuilder line = new StringBuilder();
+        StringBuilder line;
         for(int i = 0; i < tree.size(); i++)
         {
+            line = new StringBuilder();
             line.append(treeArray[i] + "`");
             List<String> temp = tree.get(treeArray[i]);
             for(int j = 0; j < temp.size(); j++){
@@ -83,16 +79,64 @@ public class SlangList{
         bw.close();
     }
 
+    public void edit(String key, String oldVal, String newVal){
+        List<String> defList = tree.get(key);
+        int index = defList.indexOf(oldVal);
+        if(oldVal != newVal)
+            defList.set(index, newVal);
+        try {
+            this.writeFile(editableFileName);
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+    }
+    public void delete(String key, String value) {
+        List<String> defList = tree.get(key);
+        int index = defList.indexOf(value);
+        if (defList.size() == 1) {
+            tree.remove(key);
+        } else {
+            defList.remove(index);
+            tree.put(key, defList);
+        }
+        try {
+            this.writeFile(editableFileName);
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
     public void reset(){
         System.out.println("Function reset");
         try {
             readFile(orgFileName);
-            writeFile(editableFileName);
+            this.writeFile(editableFileName);
         }catch(IOException e){
             e.printStackTrace();
         }
     }
 
+    public int getRandomNumber(int min, int max) {
+        return (int) ((Math.random() * (max - min)) + min);
+    }
+    public String[] random(){
+        int min = 0;
+        int max = tree.size() - 1;
+        int rand = getRandomNumber(min, max);
+        String s[] = new String[2];
+        int index = 0;
+        for (String key : tree.keySet()) {
+            if (index == rand) {
+                s[0] = key;
+                s[1] = tree.get(key).get(0);
+                break;
+            }
+            index++;
+        }
+        return s;
+
+    }
     public ArrayList<String> getHistory() throws IOException{
         ArrayList<String> arr = new ArrayList<>();
         BufferedReader br = new BufferedReader(new FileReader(historyFileName));
