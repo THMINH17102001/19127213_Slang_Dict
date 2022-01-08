@@ -97,7 +97,7 @@ public class SlangList{
         for (String key: keyList) {
             List<String> defList = tree.get(key);
             for (String x : defList) {
-                if (x.toLowerCase().contains(word.toLowerCase())) {
+                if (sentenceContainsWord(x, word)) {
                     wordContainList.add(key);
                     wordContainDefList.add(x);
                 }
@@ -114,7 +114,14 @@ public class SlangList{
         return s;
     }
 
-
+    public boolean sentenceContainsWord(String sentence, String word){
+        String[] tokens = sentence.split(" ");
+        for(String token : tokens) {
+            if(token.toLowerCase().equals(word.toLowerCase()))
+                return true;
+        }
+        return false;
+    }
     public boolean contains(String key){
         if(tree.containsKey(key))
             return true;
